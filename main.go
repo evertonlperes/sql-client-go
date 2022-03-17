@@ -39,6 +39,16 @@ func main() {
 }
 
 func GetUser(id int64) (*User, error) {
+	sqlclient.AddMock((sqlclient.Mock{
+		Query:   "SELECT id, email FROM users WHERE id=?;",
+		Args:    []interface{}{1},
+		Error:   errors.New("error creating query"),
+		Columns: []string{"id", "email"},
+		Rows: [][]interface{}{
+			{1, "email"},
+			{2, "email2"},
+		},
+	}))
 	rows, err := dbClient.Query(queryGetUser, id)
 	if err != nil {
 		return nil, err
